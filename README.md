@@ -1,5 +1,5 @@
 # documentRectifier
-A project crated when to learn open cv better.
+A project created to learn open cv better.
 
 Disclamer: This is probably not an optimal way to fix document skew.
 Also note that the way I calculate error is not perfect, as a document in perspective will give 
