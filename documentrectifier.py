@@ -19,6 +19,7 @@ README FIRST:
 
 
 Key 'Esc'- To Exit (or close window)
+Key 's' - Save rectified image to rectified_output.png
 ===============================================================================
 """
 
@@ -32,7 +33,10 @@ import math
 RAD2DEG = 180.0/3.14        # Multiply with this to convert from RADIANS to DEGREES
 CORNER_CIRCLE_RADIUS = 20   # CORNER_CIRCLE_RADIUS of circles marking corners that can be dragged
 RECTIFIED_DOC_WIDTH = 500   # width of rectified document
+INPUT_IMAGE_MAX_HEIGHT = 1280 # If input image has height grather than this, then its scaled down.
 
+inputImageScale = 1         # If image size is greater than INPUT_IMAGE_MAX_HEIGHT, we will get a scale of 2 or higher 
+                            # Mouse corrdinates will be scaled according to this variable.
 cornerPoints = []           # Contains the four corners of the document
 inputWindowName = "input"
 outputWindowName = "rectified document"
@@ -76,7 +80,10 @@ def getLength(p1,p2):
 
 # Application Function on mouse
 def onmouse(event, x, y, flags, param):
-    global img, imagCopy, drawing, mask, ix, iy, cornerPoints, CORNER_CIRCLE_RADIUS, buttonDown
+    global img, imagCopy, drawing, mask, ix, iy, cornerPoints, CORNER_CIRCLE_RADIUS, buttonDown, inputImageScale
+    x = inputImageScale*x
+    y = inputImageScale*y
+
     cornerGrabbed = False   # Will contain a corner when using mouse to correct document corners
     if (event == cv2.EVENT_LBUTTONDOWN):
         buttonDown = True
@@ -252,6 +259,11 @@ if __name__ == '__main__':
         # Warp source image to destination
         im_dst = cv2.warpPerspective(originalImg, h, size[0:2])
         
+        if img.shape[0] > INPUT_IMAGE_MAX_HEIGHT:
+            inputImageScale = math.ceil(img.shape[0] / INPUT_IMAGE_MAX_HEIGHT)
+            scale = 1/inputImageScale
+            img = cv2.resize(img,None,fx=scale,fy=scale)
+
         # Exit if one of the windows are closed
         if cv2.getWindowProperty(inputWindowName, 0) < 0 or cv2.getWindowProperty(outputWindowName, 0) < 0:
             exitLoop = True
@@ -261,8 +273,7 @@ if __name__ == '__main__':
         elif k == ord('s'):     # save image
             cv2.imwrite('rectified_output.png', im_dst)
             print("Result saved as image \n")
- 
-
+        
         cv2.imshow(inputWindowName, img)
         cv2.imshow(outputWindowName, im_dst)
 
