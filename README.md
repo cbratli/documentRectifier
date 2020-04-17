@@ -13,10 +13,12 @@ python documentrectifier.py example.jpg
 
 
 Input document:
-<a href="url"><img src="example.png" align="left" width="500" ></a>
+<br>
+<a href="url"><img src="example.jpg" align="left" width="500" ></a>
 
 
 Output document:
+<br>
 <a href="url"><img src="rectified_output.png" align="left" width="500" ></a>
 
 
